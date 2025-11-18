@@ -227,6 +227,47 @@ export type Database = {
           },
         ]
       }
+      invites: {
+        Row: {
+          business_id: string
+          created_at: string
+          email: string
+          expires_at: string
+          id: string
+          invited_by: string | null
+          role: Database["public"]["Enums"]["user_role"] | null
+          status: string | null
+        }
+        Insert: {
+          business_id: string
+          created_at?: string
+          email: string
+          expires_at?: string
+          id?: string
+          invited_by?: string | null
+          role?: Database["public"]["Enums"]["user_role"] | null
+          status?: string | null
+        }
+        Update: {
+          business_id?: string
+          created_at?: string
+          email?: string
+          expires_at?: string
+          id?: string
+          invited_by?: string | null
+          role?: Database["public"]["Enums"]["user_role"] | null
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invites_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -406,7 +447,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      accept_invite: { Args: { invite_id: string }; Returns: Json }
     }
     Enums: {
       business_industry:

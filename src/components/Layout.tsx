@@ -1,13 +1,16 @@
 import { ReactNode } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/contexts/AuthContext";
+import { Button } from "@/components/ui/button";
 import { 
   LayoutDashboard, 
   Users, 
   Building2, 
   CheckSquare, 
   FileText,
-  Settings
+  Settings,
+  LogOut
 } from "lucide-react";
 
 interface LayoutProps {
@@ -25,6 +28,7 @@ const navItems = [
 
 export function Layout({ children }: LayoutProps) {
   const location = useLocation();
+  const { signOut, profile } = useAuth();
 
   return (
     <div className="flex h-screen bg-background">
@@ -63,6 +67,28 @@ export function Layout({ children }: LayoutProps) {
             );
           })}
         </nav>
+
+        {/* User Section */}
+        <div className="p-4 border-t border-sidebar-border space-y-3">
+          {profile && (
+            <div className="px-3 py-2">
+              <p className="text-sm font-medium text-sidebar-foreground">
+                {profile.full_name || "User"}
+              </p>
+              <p className="text-xs text-muted-foreground capitalize">
+                {profile.role}
+              </p>
+            </div>
+          )}
+          <Button
+            variant="ghost"
+            className="w-full justify-start gap-2 text-sidebar-foreground hover:bg-sidebar-accent/50"
+            onClick={() => signOut()}
+          >
+            <LogOut className="h-4 w-4" />
+            Sign Out
+          </Button>
+        </div>
       </aside>
 
       {/* Main Content */}

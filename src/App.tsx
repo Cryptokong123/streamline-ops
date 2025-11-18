@@ -2,8 +2,12 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { AuthProvider } from "./contexts/AuthContext";
+import { ProtectedRoute } from "./components/ProtectedRoute";
 import { Layout } from "./components/Layout";
+import Landing from "./pages/Landing";
+import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import Contacts from "./pages/Contacts";
 import Properties from "./pages/Properties";
@@ -20,18 +24,74 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <Layout>
+        <AuthProvider>
           <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/contacts" element={<Contacts />} />
-            <Route path="/properties" element={<Properties />} />
-            <Route path="/tasks" element={<Tasks />} />
-            <Route path="/documents" element={<Documents />} />
-            <Route path="/settings" element={<Settings />} />
+            <Route path="/landing" element={<Landing />} />
+            <Route path="/auth" element={<Auth />} />
+            <Route
+              path="/"
+              element={
+                <ProtectedRoute>
+                  <Layout>
+                    <Dashboard />
+                  </Layout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/contacts"
+              element={
+                <ProtectedRoute>
+                  <Layout>
+                    <Contacts />
+                  </Layout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/properties"
+              element={
+                <ProtectedRoute>
+                  <Layout>
+                    <Properties />
+                  </Layout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/tasks"
+              element={
+                <ProtectedRoute>
+                  <Layout>
+                    <Tasks />
+                  </Layout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/documents"
+              element={
+                <ProtectedRoute>
+                  <Layout>
+                    <Documents />
+                  </Layout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/settings"
+              element={
+                <ProtectedRoute>
+                  <Layout>
+                    <Settings />
+                  </Layout>
+                </ProtectedRoute>
+              }
+            />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
-        </Layout>
+        </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
