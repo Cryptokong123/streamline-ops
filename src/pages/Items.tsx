@@ -7,6 +7,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { useItems, useCreateItem, useBulkDeleteItems, type ItemWithType } from "@/hooks/use-items";
 import { useItemTypes } from "@/hooks/use-custom-types";
 import { useToast } from "@/hooks/use-toast";
+import { ItemDetailModal } from "@/components/ItemDetailModal";
 import {
   Dialog,
   DialogContent,
@@ -35,6 +36,7 @@ import { format } from "date-fns";
 export default function Items() {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [selectedRows, setSelectedRows] = useState<ItemWithType[]>([]);
   const [selectedItem, setSelectedItem] = useState<ItemWithType | null>(null);
 
@@ -364,11 +366,17 @@ export default function Items() {
         onRowSelectionChange={setSelectedRows}
         onRowClick={(item) => {
           setSelectedItem(item);
-          // TODO: Open detail modal
-          toast({
-            title: "Item selected",
-            description: `Opening details for ${item.title}`,
-          });
+          setIsDetailModalOpen(true);
+        }}
+      />
+
+      {/* Item Detail Modal */}
+      <ItemDetailModal
+        item={selectedItem}
+        open={isDetailModalOpen}
+        onOpenChange={(open) => {
+          setIsDetailModalOpen(open);
+          if (!open) setSelectedItem(null);
         }}
       />
 
