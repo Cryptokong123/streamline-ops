@@ -11,6 +11,8 @@ import {
   CheckSquare,
   CalendarDays,
   FileText,
+  TrendingUp,
+  Receipt,
   Settings,
   LogOut
 } from "lucide-react";
@@ -29,6 +31,8 @@ const navItems: NavItem[] = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/" },
   { icon: Users, label: "Contacts", href: "/contacts" },
   { icon: Package, label: "Items", href: "/items" },
+  { icon: TrendingUp, label: "Pipeline", href: "/pipeline" },
+  { icon: Receipt, label: "Invoices", href: "/invoices" },
   { icon: CheckSquare, label: "Tasks", href: "/tasks" },
   { icon: CalendarDays, label: "Calendar", href: "/calendar" },
   { icon: FileText, label: "Documents", href: "/documents" },

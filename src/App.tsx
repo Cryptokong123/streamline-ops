@@ -14,6 +14,8 @@ import Items from "./pages/Items";
 import Tasks from "./pages/Tasks";
 import Calendar from "./pages/Calendar";
 import Documents from "./pages/Documents";
+import Pipeline from "./pages/Pipeline";
+import Invoices from "./pages/Invoices";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 
@@ -85,6 +87,26 @@ const App = () => (
                 <ProtectedRoute>
                   <Layout>
                     <Documents />
+                  </Layout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/pipeline"
+              element={
+                <ProtectedRoute>
+                  <Layout>
+                    <Pipeline />
+                  </Layout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/invoices"
+              element={
+                <ProtectedRoute>
+                  <Layout>
+                    <Invoices />
                   </Layout>
                 </ProtectedRoute>
               }
