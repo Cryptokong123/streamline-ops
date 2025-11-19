@@ -12,6 +12,7 @@ import Dashboard from "./pages/Dashboard";
 import Contacts from "./pages/Contacts";
 import Properties from "./pages/Properties";
 import Tasks from "./pages/Tasks";
+import Calendar from "./pages/Calendar";
 import Documents from "./pages/Documents";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
@@ -64,6 +65,16 @@ const App = () => (
                 <ProtectedRoute>
                   <Layout>
                     <Tasks />
+                  </Layout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/calendar"
+              element={
+                <ProtectedRoute>
+                  <Layout>
+                    <Calendar />
                   </Layout>
                 </ProtectedRoute>
               }

@@ -3,11 +3,12 @@ import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import { 
-  LayoutDashboard, 
-  Users, 
-  Building2, 
-  CheckSquare, 
+import {
+  LayoutDashboard,
+  Users,
+  Building2,
+  CheckSquare,
+  CalendarDays,
   FileText,
   Settings,
   LogOut
@@ -22,6 +23,7 @@ const navItems = [
   { icon: Users, label: "Contacts", href: "/contacts" },
   { icon: Building2, label: "Properties", href: "/properties" },
   { icon: CheckSquare, label: "Tasks", href: "/tasks" },
+  { icon: CalendarDays, label: "Calendar", href: "/calendar" },
   { icon: FileText, label: "Documents", href: "/documents" },
   { icon: Settings, label: "Settings", href: "/settings" },
 ];
