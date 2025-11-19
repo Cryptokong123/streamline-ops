@@ -14,6 +14,7 @@ import {
   TrendingUp,
   Receipt,
   BarChart3,
+  Timer,
   Settings,
   LogOut
 } from "lucide-react";
@@ -34,6 +35,7 @@ const navItems: NavItem[] = [
   { icon: Package, label: "Items", href: "/items" },
   { icon: TrendingUp, label: "Pipeline", href: "/pipeline" },
   { icon: Receipt, label: "Invoices", href: "/invoices" },
+  { icon: Timer, label: "Time Tracking", href: "/time-tracking" },
   { icon: CheckSquare, label: "Tasks", href: "/tasks" },
   { icon: CalendarDays, label: "Calendar", href: "/calendar" },
   { icon: FileText, label: "Documents", href: "/documents" },

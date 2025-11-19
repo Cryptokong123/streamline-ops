@@ -17,6 +17,7 @@ import Documents from "./pages/Documents";
 import Pipeline from "./pages/Pipeline";
 import Invoices from "./pages/Invoices";
 import Reports from "./pages/Reports";
+import TimeTracking from "./pages/TimeTracking";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 
@@ -118,6 +119,16 @@ const App = () => (
                 <ProtectedRoute>
                   <Layout>
                     <Reports />
+                  </Layout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/time-tracking"
+              element={
+                <ProtectedRoute>
+                  <Layout>
+                    <TimeTracking />
                   </Layout>
                 </ProtectedRoute>
               }
