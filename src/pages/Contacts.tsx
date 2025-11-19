@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { Plus, Trash2, Edit2, Loader2 } from "lucide-react";
+import { Plus, Trash2, Edit2, Loader2, Download, Upload } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { DataTable, createSelectColumn } from "@/components/DataTable";
 import { ColumnDef } from "@tanstack/react-table";
@@ -30,6 +30,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Database } from "@/integrations/supabase/types";
+import { ContactDetailModal } from "@/components/ContactDetailModal";
 
 type Contact = Database["public"]["Tables"]["contacts"]["Row"];
 type ContactType = Database["public"]["Enums"]["contact_type"];
@@ -39,7 +40,9 @@ export default function Contacts() {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [selectedRows, setSelectedRows] = useState<Contact[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Form state for new/edit contact
   const [formData, setFormData] = useState({
@@ -163,6 +166,154 @@ export default function Contacts() {
     setIsEditDialogOpen(true);
   };
 
+  const handleExportCSV = () => {
+    if (contacts.length === 0) {
+      toast({
+        title: "No data to export",
+        description: "There are no contacts to export",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // CSV headers
+    const headers = ["Name", "Email", "Phone", "Type", "Address", "Notes"];
+
+    // Convert contacts to CSV rows
+    const rows = contacts.map(contact => [
+      contact.name || "",
+      contact.email || "",
+      contact.phone || "",
+      contact.type || "",
+      contact.address || "",
+      contact.notes || ""
+    ]);
+
+    // Combine headers and rows
+    const csvContent = [
+      headers.join(","),
+      ...rows.map(row => row.map(field => `"${field.replace(/"/g, '""')}"`).join(","))
+    ].join("\n");
+
+    // Create blob and download
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute("download", `contacts_export_${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = "hidden";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    toast({
+      title: "Success",
+      description: `Exported ${contacts.length} contacts to CSV`,
+    });
+  };
+
+  const handleImportCSV = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      try {
+        const text = e.target?.result as string;
+        const lines = text.split("\n").filter(line => line.trim());
+
+        if (lines.length < 2) {
+          toast({
+            title: "Error",
+            description: "CSV file is empty or invalid",
+            variant: "destructive",
+          });
+          return;
+        }
+
+        // Skip header row
+        const dataLines = lines.slice(1);
+        const importedContacts: Array<Omit<typeof formData, "business_id" | "created_by">> = [];
+
+        for (const line of dataLines) {
+          // Parse CSV line (handle quoted fields)
+          const fields: string[] = [];
+          let currentField = "";
+          let inQuotes = false;
+
+          for (let i = 0; i < line.length; i++) {
+            const char = line[i];
+            const nextChar = line[i + 1];
+
+            if (char === '"' && nextChar === '"') {
+              currentField += '"';
+              i++; // Skip next quote
+            } else if (char === '"') {
+              inQuotes = !inQuotes;
+            } else if (char === ',' && !inQuotes) {
+              fields.push(currentField);
+              currentField = "";
+            } else {
+              currentField += char;
+            }
+          }
+          fields.push(currentField); // Add last field
+
+          if (fields.length >= 1 && fields[0].trim()) {
+            importedContacts.push({
+              name: fields[0]?.trim() || "",
+              email: fields[1]?.trim() || "",
+              phone: fields[2]?.trim() || "",
+              type: (fields[3]?.trim() as ContactType) || "client",
+              address: fields[4]?.trim() || "",
+              notes: fields[5]?.trim() || "",
+            });
+          }
+        }
+
+        if (importedContacts.length === 0) {
+          toast({
+            title: "Error",
+            description: "No valid contacts found in CSV",
+            variant: "destructive",
+          });
+          return;
+        }
+
+        // Import contacts one by one
+        let successCount = 0;
+        let errorCount = 0;
+
+        for (const contact of importedContacts) {
+          try {
+            await createContact.mutateAsync(contact);
+            successCount++;
+          } catch (error) {
+            errorCount++;
+          }
+        }
+
+        toast({
+          title: "Import Complete",
+          description: `Successfully imported ${successCount} contacts${errorCount > 0 ? `. Failed: ${errorCount}` : ""}`,
+        });
+
+        // Reset file input
+        if (fileInputRef.current) {
+          fileInputRef.current.value = "";
+        }
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: "Failed to parse CSV file",
+          variant: "destructive",
+        });
+      }
+    };
+
+    reader.readAsText(file);
+  };
+
   const getTypeColor = (type: string) => {
     switch (type) {
       case "client":
@@ -283,6 +434,30 @@ export default function Contacts() {
               Delete ({selectedRows.length})
             </Button>
           )}
+          <Button
+            variant="outline"
+            className="gap-2"
+            onClick={handleExportCSV}
+            disabled={contacts.length === 0}
+          >
+            <Download className="h-4 w-4" />
+            Export CSV
+          </Button>
+          <Button
+            variant="outline"
+            className="gap-2"
+            onClick={() => fileInputRef.current?.click()}
+          >
+            <Upload className="h-4 w-4" />
+            Import CSV
+          </Button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".csv"
+            onChange={handleImportCSV}
+            className="hidden"
+          />
           <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
             <DialogTrigger asChild>
               <Button className="gap-2">
@@ -394,6 +569,10 @@ export default function Contacts() {
         searchKey="name"
         searchPlaceholder="Search contacts by name..."
         onRowSelectionChange={setSelectedRows}
+        onRowClick={(contact) => {
+          setSelectedContact(contact);
+          setIsDetailModalOpen(true);
+        }}
       />
 
       {/* Edit Dialog */}
@@ -515,6 +694,16 @@ export default function Contacts() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Contact Detail Modal */}
+      <ContactDetailModal
+        contact={selectedContact}
+        open={isDetailModalOpen}
+        onOpenChange={(open) => {
+          setIsDetailModalOpen(open);
+          if (!open) setSelectedContact(null);
+        }}
+      />
     </div>
   );
 }
