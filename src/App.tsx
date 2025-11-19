@@ -10,7 +10,7 @@ import Landing from "./pages/Landing";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import Contacts from "./pages/Contacts";
-import Properties from "./pages/Properties";
+import Items from "./pages/Items";
 import Tasks from "./pages/Tasks";
 import Calendar from "./pages/Calendar";
 import Documents from "./pages/Documents";
@@ -50,11 +50,11 @@ const App = () => (
               }
             />
             <Route
-              path="/properties"
+              path="/items"
               element={
                 <ProtectedRoute>
                   <Layout>
-                    <Properties />
+                    <Items />
                   </Layout>
                 </ProtectedRoute>
               }

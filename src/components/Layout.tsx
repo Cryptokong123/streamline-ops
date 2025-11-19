@@ -4,11 +4,10 @@ import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { NotificationBell } from "@/components/NotificationBell";
-import { useBusiness } from "@/hooks/use-business";
 import {
   LayoutDashboard,
   Users,
-  Building2,
+  Package,
   CheckSquare,
   CalendarDays,
   FileText,
@@ -22,25 +21,23 @@ interface LayoutProps {
 
 interface NavItem {
   icon: typeof LayoutDashboard;
-  labelKey: string;
-  defaultLabel: string;
+  label: string;
   href: string;
 }
 
 const navItems: NavItem[] = [
-  { icon: LayoutDashboard, labelKey: "dashboard", defaultLabel: "Dashboard", href: "/" },
-  { icon: Users, labelKey: "contacts", defaultLabel: "Contacts", href: "/contacts" },
-  { icon: Building2, labelKey: "properties", defaultLabel: "Properties", href: "/properties" },
-  { icon: CheckSquare, labelKey: "tasks", defaultLabel: "Tasks", href: "/tasks" },
-  { icon: CalendarDays, labelKey: "calendar", defaultLabel: "Calendar", href: "/calendar" },
-  { icon: FileText, labelKey: "documents", defaultLabel: "Documents", href: "/documents" },
-  { icon: Settings, labelKey: "settings", defaultLabel: "Settings", href: "/settings" },
+  { icon: LayoutDashboard, label: "Dashboard", href: "/" },
+  { icon: Users, label: "Contacts", href: "/contacts" },
+  { icon: Package, label: "Items", href: "/items" },
+  { icon: CheckSquare, label: "Tasks", href: "/tasks" },
+  { icon: CalendarDays, label: "Calendar", href: "/calendar" },
+  { icon: FileText, label: "Documents", href: "/documents" },
+  { icon: Settings, label: "Settings", href: "/settings" },
 ];
 
 export function Layout({ children }: LayoutProps) {
   const location = useLocation();
   const { signOut, profile } = useAuth();
-  const { data: business } = useBusiness();
 
   return (
     <div className="flex h-screen bg-background">
@@ -62,10 +59,6 @@ export function Layout({ children }: LayoutProps) {
             const Icon = item.icon;
             const isActive = location.pathname === item.href;
 
-            // Get custom label from business settings or use default
-            const moduleLabels = business?.module_labels as Record<string, string> | null;
-            const label = moduleLabels?.[item.labelKey] || item.defaultLabel;
-
             return (
               <Link
                 key={item.href}
@@ -78,7 +71,7 @@ export function Layout({ children }: LayoutProps) {
                 )}
               >
                 <Icon className="h-5 w-5" />
-                {label}
+                {item.label}
               </Link>
             );
           })}

@@ -11,7 +11,9 @@
       "Bash(git remote set-url:*)",
       "Bash(git clone:*)",
       "Bash(git pull:*)",
-      "Bash(git rebase:*)"
+      "Bash(git rebase:*)",
+      "Bash(npx supabase:*)",
+      "Bash(src/integrations/supabase/types_new.ts)"
     ],
     "deny": [],
     "ask": []
