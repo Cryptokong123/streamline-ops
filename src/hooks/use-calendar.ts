@@ -23,14 +23,7 @@ export function useCalendarEntries(startDate: Date, endDate: Date) {
         .from("calendar_entries")
         .select(`
           *,
-          created_by_profile:profiles!calendar_entries_created_by_fkey(id, full_name, avatar_url),
-          calendar_entry_attendees(
-            id,
-            user_id,
-            status,
-            user:profiles!calendar_entry_attendees_user_id_fkey(id, full_name, avatar_url)
-          ),
-          task:tasks(id, title, status, priority)
+          calendar_entry_attendees(*)
         `)
         .eq("business_id", profile.business_id)
         .gte("end_time", startDate.toISOString())
@@ -38,13 +31,7 @@ export function useCalendarEntries(startDate: Date, endDate: Date) {
         .order("start_time");
 
       if (error) throw error;
-      return data as (CalendarEntry & {
-        created_by_profile: { id: string; full_name: string | null; avatar_url: string | null };
-        calendar_entry_attendees: Array<CalendarAttendee & {
-          user: { id: string; full_name: string | null; avatar_url: string | null };
-        }>;
-        task?: { id: string; title: string; status: string; priority: string } | null;
-      })[];
+      return data;
     },
     enabled: !!profile?.business_id,
   });
@@ -90,13 +77,7 @@ export function useUserCalendar(startDate: Date, endDate: Date, userId?: string)
         .from("calendar_entries")
         .select(`
           *,
-          created_by_profile:profiles!calendar_entries_created_by_fkey(id, full_name, avatar_url),
-          calendar_entry_attendees!inner(
-            id,
-            user_id,
-            status
-          ),
-          task:tasks(id, title, status, priority)
+          calendar_entry_attendees!inner(*)
         `)
         .eq("business_id", profile.business_id)
         .eq("calendar_entry_attendees.user_id", targetUserId)

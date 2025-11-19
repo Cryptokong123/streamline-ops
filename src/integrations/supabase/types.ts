@@ -97,6 +97,94 @@ export type Database = {
         }
         Relationships: []
       }
+      calendar_entries: {
+        Row: {
+          business_id: string
+          color: string | null
+          created_at: string
+          created_by: string | null
+          description: string | null
+          end_time: string
+          id: string
+          is_all_day: boolean | null
+          location: string | null
+          start_time: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          business_id: string
+          color?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          end_time: string
+          id?: string
+          is_all_day?: boolean | null
+          location?: string | null
+          start_time: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          business_id?: string
+          color?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          end_time?: string
+          id?: string
+          is_all_day?: boolean | null
+          location?: string | null
+          start_time?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "calendar_entries_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      calendar_entry_attendees: {
+        Row: {
+          calendar_entry_id: string
+          created_at: string
+          id: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          calendar_entry_id: string
+          created_at?: string
+          id?: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          calendar_entry_id?: string
+          created_at?: string
+          id?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "calendar_entry_attendees_calendar_entry_id_fkey"
+            columns: ["calendar_entry_id"]
+            isOneToOne: false
+            referencedRelation: "calendar_entries"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       contacts: {
         Row: {
           address: string | null
@@ -369,6 +457,38 @@ export type Database = {
           },
         ]
       }
+      task_assignments: {
+        Row: {
+          assigned_at: string
+          assigned_by: string | null
+          id: string
+          task_id: string
+          user_id: string
+        }
+        Insert: {
+          assigned_at?: string
+          assigned_by?: string | null
+          id?: string
+          task_id: string
+          user_id: string
+        }
+        Update: {
+          assigned_at?: string
+          assigned_by?: string | null
+          id?: string
+          task_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_assignments_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tasks: {
         Row: {
           assigned_to: string | null
@@ -448,6 +568,41 @@ export type Database = {
     }
     Functions: {
       accept_invite: { Args: { invite_id: string }; Returns: Json }
+      get_team_calendar_entries: {
+        Args: { end_date: string; start_date: string; user_ids: string[] }
+        Returns: {
+          business_id: string
+          created_at: string
+          created_by: string
+          description: string
+          end_time: string
+          id: string
+          is_all_day: boolean
+          location: string
+          start_time: string
+          title: string
+          updated_at: string
+        }[]
+      }
+      get_user_assigned_tasks: {
+        Args: { target_user_id: string }
+        Returns: {
+          assigned_to: string
+          business_id: string
+          contact_id: string
+          created_at: string
+          created_by: string
+          custom_fields: Json
+          description: string
+          due_date: string
+          id: string
+          priority: Database["public"]["Enums"]["task_priority"]
+          property_id: string
+          status: Database["public"]["Enums"]["task_status"]
+          title: string
+          updated_at: string
+        }[]
+      }
       get_user_business_id: { Args: { user_id: string }; Returns: string }
     }
     Enums: {
