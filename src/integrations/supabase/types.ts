@@ -379,15 +379,10 @@ export type Database = {
           custom_fields: Json | null
           description: string | null
           due_date: string | null
-          end_time: string | null
           id: string
-          is_all_day: boolean | null
           priority: Database["public"]["Enums"]["task_priority"] | null
           property_id: string | null
-          recurrence_rule: string | null
-          start_time: string | null
           status: Database["public"]["Enums"]["task_status"] | null
-          time_estimate_minutes: number | null
           title: string
           updated_at: string
         }
@@ -400,15 +395,10 @@ export type Database = {
           custom_fields?: Json | null
           description?: string | null
           due_date?: string | null
-          end_time?: string | null
           id?: string
-          is_all_day?: boolean | null
           priority?: Database["public"]["Enums"]["task_priority"] | null
           property_id?: string | null
-          recurrence_rule?: string | null
-          start_time?: string | null
           status?: Database["public"]["Enums"]["task_status"] | null
-          time_estimate_minutes?: number | null
           title: string
           updated_at?: string
         }
@@ -421,15 +411,10 @@ export type Database = {
           custom_fields?: Json | null
           description?: string | null
           due_date?: string | null
-          end_time?: string | null
           id?: string
-          is_all_day?: boolean | null
           priority?: Database["public"]["Enums"]["task_priority"] | null
           property_id?: string | null
-          recurrence_rule?: string | null
-          start_time?: string | null
           status?: Database["public"]["Enums"]["task_status"] | null
-          time_estimate_minutes?: number | null
           title?: string
           updated_at?: string
         }
@@ -457,204 +442,12 @@ export type Database = {
           },
         ]
       }
-      task_assignments: {
-        Row: {
-          assigned_at: string
-          assigned_by: string | null
-          id: string
-          task_id: string
-          user_id: string
-        }
-        Insert: {
-          assigned_at?: string
-          assigned_by?: string | null
-          id?: string
-          task_id: string
-          user_id: string
-        }
-        Update: {
-          assigned_at?: string
-          assigned_by?: string | null
-          id?: string
-          task_id?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "task_assignments_task_id_fkey"
-            columns: ["task_id"]
-            isOneToOne: false
-            referencedRelation: "tasks"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "task_assignments_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "task_assignments_assigned_by_fkey"
-            columns: ["assigned_by"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      calendar_entries: {
-        Row: {
-          business_id: string
-          color: string | null
-          created_at: string
-          created_by: string
-          description: string | null
-          end_time: string
-          id: string
-          is_all_day: boolean | null
-          location: string | null
-          recurrence_rule: string | null
-          start_time: string
-          task_id: string | null
-          title: string
-          updated_at: string
-        }
-        Insert: {
-          business_id: string
-          color?: string | null
-          created_at?: string
-          created_by: string
-          description?: string | null
-          end_time: string
-          id?: string
-          is_all_day?: boolean | null
-          location?: string | null
-          recurrence_rule?: string | null
-          start_time: string
-          task_id?: string | null
-          title: string
-          updated_at?: string
-        }
-        Update: {
-          business_id?: string
-          color?: string | null
-          created_at?: string
-          created_by?: string
-          description?: string | null
-          end_time?: string
-          id?: string
-          is_all_day?: boolean | null
-          location?: string | null
-          recurrence_rule?: string | null
-          start_time?: string
-          task_id?: string | null
-          title?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "calendar_entries_business_id_fkey"
-            columns: ["business_id"]
-            isOneToOne: false
-            referencedRelation: "businesses"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "calendar_entries_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "calendar_entries_task_id_fkey"
-            columns: ["task_id"]
-            isOneToOne: false
-            referencedRelation: "tasks"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      calendar_entry_attendees: {
-        Row: {
-          added_at: string
-          calendar_entry_id: string
-          id: string
-          status: string | null
-          user_id: string
-        }
-        Insert: {
-          added_at?: string
-          calendar_entry_id: string
-          id?: string
-          status?: string | null
-          user_id: string
-        }
-        Update: {
-          added_at?: string
-          calendar_entry_id?: string
-          id?: string
-          status?: string | null
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "calendar_entry_attendees_calendar_entry_id_fkey"
-            columns: ["calendar_entry_id"]
-            isOneToOne: false
-            referencedRelation: "calendar_entries"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "calendar_entry_attendees_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
       accept_invite: { Args: { invite_id: string }; Returns: Json }
-      get_user_assigned_tasks: {
-        Args: { target_user_id: string }
-        Returns: {
-          task_id: string
-          title: string
-          description: string | null
-          due_date: string | null
-          start_time: string | null
-          end_time: string | null
-          status: Database["public"]["Enums"]["task_status"]
-          priority: Database["public"]["Enums"]["task_priority"]
-          business_id: string
-        }[]
-      }
-      get_team_calendar_entries: {
-        Args: {
-          user_ids: string[]
-          start_date: string
-          end_date: string
-        }
-        Returns: {
-          entry_id: string
-          title: string
-          description: string | null
-          start_time: string
-          end_time: string
-          is_all_day: boolean | null
-          location: string | null
-          color: string | null
-          created_by: string
-          created_by_name: string | null
-          attendee_ids: string[] | null
-        }[]
-      }
     }
     Enums: {
       business_industry:
