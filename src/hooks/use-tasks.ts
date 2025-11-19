@@ -23,25 +23,13 @@ export function useTasks() {
         .from("tasks")
         .select(`
           *,
-          assigned_to_profile:profiles!tasks_assigned_to_fkey(id, full_name, avatar_url),
-          task_assignments(
-            id,
-            user_id,
-            assigned_at,
-            assigned_by,
-            user:profiles!task_assignments_user_id_fkey(id, full_name, avatar_url)
-          )
+          task_assignments(*)
         `)
         .eq("business_id", profile.business_id)
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      return data as (Task & {
-        assigned_to_profile?: { id: string; full_name: string | null; avatar_url: string | null };
-        task_assignments: Array<TaskAssignment & {
-          user: { id: string; full_name: string | null; avatar_url: string | null };
-        }>;
-      })[];
+      return data;
     },
     enabled: !!profile?.business_id,
   });

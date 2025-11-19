@@ -51,7 +51,7 @@ export default function Tasks() {
     }
 
     try {
-      await createTask.mutateAsync(newTask);
+      await createTask.mutateAsync(newTask as any);
       toast({
         title: "Success",
         description: "Task created successfully",
@@ -165,8 +165,7 @@ export default function Tasks() {
   };
 
   const TaskCard = ({ task }: { task: typeof tasks[0] }) => {
-    const assignedUsers = task.task_assignments?.map((a) => a.user) || [];
-    const hasAssignments = assignedUsers.length > 0;
+    const assignedUserCount = task.task_assignments?.length || 0;
 
     return (
       <Card className="hover:shadow-md transition-shadow">
@@ -192,23 +191,10 @@ export default function Tasks() {
                   </div>
                 )}
 
-                {hasAssignments && (
+                {assignedUserCount > 0 && (
                   <div className="flex items-center gap-2">
                     <Users className="h-4 w-4 text-muted-foreground" />
-                    <div className="flex -space-x-2">
-                      {assignedUsers.slice(0, 3).map((user) => (
-                        <Avatar key={user.id} className="h-6 w-6 border-2 border-background">
-                          <AvatarFallback className="text-xs">
-                            {getInitials(user.full_name)}
-                          </AvatarFallback>
-                        </Avatar>
-                      ))}
-                      {assignedUsers.length > 3 && (
-                        <div className="h-6 w-6 rounded-full bg-muted border-2 border-background flex items-center justify-center text-xs">
-                          +{assignedUsers.length - 3}
-                        </div>
-                      )}
-                    </div>
+                    <span className="text-muted-foreground">{assignedUserCount} assigned</span>
                   </div>
                 )}
 
@@ -228,7 +214,7 @@ export default function Tasks() {
                       }}
                     >
                       <Users className="h-4 w-4 mr-2" />
-                      {hasAssignments ? "Manage" : "Assign"}
+                      {assignedUserCount > 0 ? "Manage" : "Assign"}
                     </Button>
                   </DialogTrigger>
                   <DialogContent>
