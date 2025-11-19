@@ -448,6 +448,7 @@ export type Database = {
     }
     Functions: {
       accept_invite: { Args: { invite_id: string }; Returns: Json }
+      get_user_business_id: { Args: { user_id: string }; Returns: string }
     }
     Enums: {
       business_industry:
