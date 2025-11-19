@@ -16,6 +16,7 @@ import Calendar from "./pages/Calendar";
 import Documents from "./pages/Documents";
 import Pipeline from "./pages/Pipeline";
 import Invoices from "./pages/Invoices";
+import Reports from "./pages/Reports";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 
@@ -107,6 +108,16 @@ const App = () => (
                 <ProtectedRoute>
                   <Layout>
                     <Invoices />
+                  </Layout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/reports"
+              element={
+                <ProtectedRoute>
+                  <Layout>
+                    <Reports />
                   </Layout>
                 </ProtectedRoute>
               }

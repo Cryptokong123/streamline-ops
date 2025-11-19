@@ -13,6 +13,7 @@ import {
   FileText,
   TrendingUp,
   Receipt,
+  BarChart3,
   Settings,
   LogOut
 } from "lucide-react";
@@ -36,6 +37,7 @@ const navItems: NavItem[] = [
   { icon: CheckSquare, label: "Tasks", href: "/tasks" },
   { icon: CalendarDays, label: "Calendar", href: "/calendar" },
   { icon: FileText, label: "Documents", href: "/documents" },
+  { icon: BarChart3, label: "Reports", href: "/reports" },
   { icon: Settings, label: "Settings", href: "/settings" },
 ];
 
