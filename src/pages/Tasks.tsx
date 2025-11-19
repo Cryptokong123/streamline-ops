@@ -11,6 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { TaskDetailModal } from "@/components/TaskDetailModal";
 import { useTasks, useCreateTask, useUpdateTask, useDeleteTask, useAssignTask, useTeamMembers } from "@/hooks/use-tasks";
 import { useToast } from "@/hooks/use-toast";
 import { Database } from "@/integrations/supabase/types";
@@ -23,6 +24,8 @@ export default function Tasks() {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [selectedTaskForAssignment, setSelectedTaskForAssignment] = useState<string | null>(null);
   const [selectedAssignees, setSelectedAssignees] = useState<string[]>([]);
+  const [selectedTask, setSelectedTask] = useState<typeof tasks[0] | null>(null);
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
 
   // Form state for new task
   const [newTask, setNewTask] = useState({
@@ -168,7 +171,13 @@ export default function Tasks() {
     const assignedUserCount = task.task_assignments?.length || 0;
 
     return (
-      <Card className="hover:shadow-md transition-shadow">
+      <Card
+        className="hover:shadow-md transition-shadow cursor-pointer"
+        onClick={() => {
+          setSelectedTask(task);
+          setIsDetailModalOpen(true);
+        }}
+      >
         <CardContent className="p-6">
           <div className="flex items-start justify-between gap-4">
             <div className="flex-1 space-y-3">
@@ -208,7 +217,8 @@ export default function Tasks() {
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => {
+                      onClick={(e) => {
+                        e.stopPropagation();
                         setSelectedTaskForAssignment(task.id);
                         setSelectedAssignees(task.task_assignments?.map((a) => a.user_id) || []);
                       }}
@@ -457,6 +467,16 @@ export default function Tasks() {
           </TabsContent>
         ))}
       </Tabs>
+
+      {/* Task Detail Modal */}
+      <TaskDetailModal
+        task={selectedTask}
+        open={isDetailModalOpen}
+        onOpenChange={(open) => {
+          setIsDetailModalOpen(open);
+          if (!open) setSelectedTask(null);
+        }}
+      />
     </div>
   );
 }
